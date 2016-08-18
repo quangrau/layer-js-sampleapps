@@ -27,6 +27,7 @@ window.addEventListener('message', function(evt) {
  * and loads the Chat Controller
  */
 sampleControllers.controller('appCtrl', function ($scope) {
+
   $scope.appCtrlState = {
     isReady: false,
     client: null

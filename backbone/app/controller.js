@@ -14,7 +14,6 @@ var AnnouncementsView = require('./views/announcements');
  */
 var Router = Backbone.Router.extend({
   routes: {
-    'conversations/new': 'conversation:new',
     'conversations/:id': 'conversation:selected',
     'announcements': 'announcements'
   }
@@ -30,12 +29,11 @@ module.exports = function(client) {
   var conversationsView = new ConversationsView(client);
   var messagesView = new MessagesView(client);
   var titlebarView = new TitlebarView();
-  var participantsView = new ParticipantsView();
+  var participantsView = new ParticipantsView(client);
   var announcementsView = new AnnouncementsView();
 
   participantsView.user = client.user;
-
-
+  Backbone.$('.create-conversation').on('click', newConversation);
 
   /**
    * Create Announcements Query
@@ -43,13 +41,6 @@ module.exports = function(client) {
   var announcementsQuery = client.createQuery({
     model: layer.Query.Announcement,
     paginationWindow: 30
-  });
-
-  /**
-   * Create Identity List Query
-   */
-  var identityQuery = client.createQuery({
-    model: layer.Query.Identity
   });
 
   announcementsQuery.on('change', function(e) {
@@ -69,29 +60,34 @@ module.exports = function(client) {
     });
     Backbone.$('.announcements-button').toggleClass('unread-announcements', unread.length > 0);
   });
+
+   /**
+   * Create Identity List Query; this is solely for validating
+   * that the app is setup right, and is not actually used for this UI.
+   */
+  var identityQuery = client.createQuery({
+    model: layer.Query.Identity
+  });
+
   identityQuery.on('change', function(evt) {
     if (evt.type === 'data') {
       window.layerSample.validateSetup(client);
     }
-    participantsView.users = identityQuery.data;
-    participantsView.render();
   });
-
-
 
 
   /**
-   * View event listeners
+   * Handle request to start creating a New Conversation
    */
-  conversationsView.on('conversation:delete', function(conversationId) {
-    var conversation = client.getConversation(conversationId);
-    if (confirm('Are you sure you want to delete this conversation?')) {
-      conversation.delete(layer.Constants.DELETION_MODE.ALL);
-    }
-  });
+  function newConversation() {
+    participantsView.clearParticipants();
+    participantsView.show();
+  }
 
+  /**
+   * Create a Conversation using the WebSDK Client.
+   */
   participantsView.on('conversation:create', function(participants) {
-    // See http://static.layer.com/sdk/docs/#!/api/layer.Conversation
     var conversation = client.createConversation({
       participants: participants,
       distinct: participants.length === 1
@@ -103,31 +99,21 @@ module.exports = function(client) {
   });
 
   /**
-   * Routing
+   * Handle navigation to a Conversation
    */
   router.on('route:conversation:selected', function(uuid) {
     activeConversationId = 'layer:///conversations/' + uuid;
     var conversation = client.getConversation(activeConversationId, true);
-
     messagesView.setConversation(conversation);
-
-    titlebarView.conversation = conversation;
-
-    renderAll();
+    titlebarView.setConversation(conversation);
   });
 
-  router.on('route:conversation:new', function() {
-    participantsView.show();
-  });
-
+  /**
+   * Handle request to view Announcements
+   */
   router.on('route:announcements', function() {
     announcementsView.show();
   });
-
-  function renderAll() {
-    titlebarView.render();
-    participantsView.render();
-  }
 
   if (window.location.hash) Backbone.history.loadUrl(Backbone.history.fragment);
 };

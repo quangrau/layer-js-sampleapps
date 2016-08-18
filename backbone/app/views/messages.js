@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * Provide a View for the Conversation.;
+ *
+ * Wrapper for `<layer-conversation>` widget
+ */
+
 var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
@@ -13,14 +19,19 @@ module.exports = Backbone.View.extend({
     });
 
     /**
-     * Setup the <layer-conversation /> widget
+     * Setup the `<layer-conversation/>` widget
      */
     this.$el[0].query = this.query;
     this.$el[0].client = client;
   },
+
+  /**
+   * Any time the Conversation changes, update the query and converationId.
+   */
   setConversation: function(conversation) {
     this.query.update({
       predicate: 'conversation.id = "' + conversation.id + '"'
     });
+    this.$el[0].conversationId = conversation.id;
   }
 });

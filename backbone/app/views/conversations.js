@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * Provide a View for the current Conversation.;
+ *
+ * Wrapper for `<layer-conversation-list>` widget
+ */
+
 var Backbone = require('backbone');
 
 module.exports = Backbone.View.extend({
@@ -13,7 +19,7 @@ module.exports = Backbone.View.extend({
     });
 
     /**
-     * Setup the <layer-conversation-list /> widget
+     * Setup the `<layer-conversation-list />` widget
      */
     this.$el[0].query = this.query;
     this.$el[0].client = client;

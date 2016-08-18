@@ -7,12 +7,33 @@ module.exports = Backbone.View.extend({
   initialize: function() {
     this.emptyState = true;
   },
-  newConversation: function() {
-    this.conversation = null;
+
+  /**
+   * Any time a new Conversation is Selected, watch that Conversation for changes,
+   * and render its title.
+   */
+  setConversation: function(conversation) {
+    if (this.conversation) {
+      this.conversation.off(null, this.render, this);
+    }
+
+    // During initialization we may be given a Conversation that is still loading and for which we don't have metadata
+    // nor participants.  We might have gotten the Conversation ID from the window.location URL.  Once its loaded,
+    // rerender.  Any change events from the Conversation, rerender.
+    this.conversation = conversation;
+    if (this.conversation) {
+      this.conversation.on('conversations:change conversations:loaded', this.render, this);
+    }
     this.render();
   },
+
+  /**
+   * Render the title; its either:
+   * 1. Empty: No Selected Conversation
+   * 2. Editing: Show an input and cancel button to allow user to edit the title
+   * 3. Title: Show the selected converation's title
+   */
   render: function() {
-    console.log('render: Titlebar');
     var html = '';
 
     if (this.emptyState) {
@@ -39,11 +60,6 @@ module.exports = Backbone.View.extend({
       }
       html = '<div class="title-inner">' + title +
                 '<a href="#" class="edit-title-icon" title="Edit conversation title"><i class="fa fa-pencil"></i></a>' +
-              '</div>';
-    }
-    else {
-      html = '<div class="edit-title new-title">' +
-                '<input type="text" placeholder="Conversation title...">' +
               '</div>';
     }
 
