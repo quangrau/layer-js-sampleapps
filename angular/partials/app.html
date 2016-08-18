@@ -1,14 +1,12 @@
 <div ng-controller='chatCtrl'>
   <div class="messenger">
-    <div class="left-panel"
-         ng-controller="conversationListCtrl">
-
-        <div class="panel-header conversations-header"
-              ng-include="'partials/left-column-header.html'">
-        </div>
-        <div class="conversation-list"
-              ng-include="'partials/conversation-list.html'">
-        </div>
+    <div class="left-panel" ng-controller="conversationListCtrl">
+      <div class="panel-header conversations-header" ng-include="'partials/left-column-header.html'">
+      </div>
+      <layer-conversation-list
+        ng-client="appCtrlState.client"
+        ng-query="query"
+        ng-conversation-selected="selectConversation"></layer-conversation-list>
     </div>
 
     <div class="right-panel">

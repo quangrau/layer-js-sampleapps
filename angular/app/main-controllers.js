@@ -2,19 +2,19 @@
 'use strict';
 
 var sampleControllers = angular.module('sampleAppControllers', []);
-
-/**
- * Notes: data in this application is driven by Queries.  Queries can be set
- * to return Conversation and Message Objects or Instances.  An Object
- * lets us have an immutable object that simplifies angular's scope comparisons.
- * An Instance provides methods that let us interact with the layer services.
- * Both are used in this application: Objects for managing angular state, Instances for interacting.
- */
-
 var identityReady;
 
 /**
- * Wait for identity dialog message to complete
+ * Notes: data in this application is driven by Queries.  Queries can be set
+ * to return Conversation, Message and Identity Objects or Instances.  Using a return of type Object
+ * lets us have an immutable object that simplifies angular's scope comparisons.
+ * An Instance provides methods that let us interact with the layer services.
+ * Both are used in this application: Objects for managing angular state,
+ * Instances for interacting with the WebSDK.
+ */
+
+/**
+ * Wait for the user to specify who they are before we procede
  */
 window.addEventListener('message', function(evt) {
   if (evt.data === 'layer:identity') {
@@ -59,41 +59,37 @@ sampleControllers.controller('appCtrl', function ($scope) {
      * for this sample) and render.
      */
     $scope.appCtrlState.client.on('ready', function() {
-      $scope.appCtrlState.users = [];
-      $scope.appCtrlState.user = window.layerSample.user;
+      $scope.appCtrlState.isReady = true;
     });
 
-    // Create the User List query
-    var identityQuery = $scope.appCtrlState.client.createQuery({
+    // Create the User List query; this query will automatically wait to fire
+    // until after the client has finished authenticating.
+    $scope.identityQuery = $scope.appCtrlState.client.createQuery({
       model: layer.Query.Identity,
       dataType: 'object',
       paginationWindow: 500,
       change: function(evt) {
-        // This query won't run until the client "ready" event has triggered;
-        // and the query's "change" event won't trigger until it runs.
-        // While it is not required to wait, we wait until Identities have loaded before we
-        // start rendering the UI
-        $scope.appCtrlState.isReady = true;
-        $scope.appCtrlState.users = identityQuery.data.filter(function(user) {
-          return user.id !== $scope.appCtrlState.client.user.id;
-        });
-        $scope.$digest();
+
+        // Any changes to the query, update our rendering
+        $scope.$apply();
         if (evt.type === 'data') {
           window.layerSample.validateSetup($scope.appCtrlState.client);
         }
       }
     });
 
+    // Start the authentication process
     $scope.appCtrlState.client.connect(window.layerSample.userId);
   };
 });
 
 /**
  * The Main Application Controller manages:
- * 1. Whether to show the userList or the messages panel
+ * 1. Whether to show the user-list or announcements dialog
+ * 2. Tracking the currentConversation
  * 2. All routing (current conversation or new conversation)
  */
-sampleControllers.controller('chatCtrl', function ($scope, $route, $location) {
+sampleControllers.controller('chatCtrl', function ($scope, $location) {
   $scope.chatCtrlState = {
     showParticipants: false,
     showAnnouncements: false,
@@ -110,7 +106,6 @@ sampleControllers.controller('chatCtrl', function ($scope, $route, $location) {
     conversation.once('conversations:loaded', function() {
       $scope.chatCtrlState.currentConversation = conversation.toObject();
       $scope.$digest();
-      document.querySelectorAll('.message-textarea')[0].focus();
     });
   };
 
@@ -134,19 +129,28 @@ sampleControllers.controller('chatCtrl', function ($scope, $route, $location) {
     }
   }
 
+  // Handle any change in location
   $scope.$on('$locationChangeSuccess', handleLocation);
 
   // Handle the initial url state we loaded the app with.
   handleLocation();
 
+
+  // Start the process of creating a new Conversation
   $scope.showNewConversation = function() {
     $scope.chatCtrlState.showParticipants = true;
-    Array.prototype.slice.call(document.querySelectorAll('.participant-list :checked'))
-      .forEach(function(node) {
-        node.checked = false;
-      });
-  }
+  };
 
+  /**
+   * The user selects a Conversation in the <layer-conversation-list>
+   */
+  $scope.selectConversation = function(evt) {
+    $scope.chatCtrlState.currentConversation = evt.detail.conversation.toObject();
+
+    // TODO: Figure out why this path is lost when clicking to edit the Title; perhaps because we don't use ng-route?
+    $location.path($scope.chatCtrlState.currentConversation.id.substring(8));
+    $scope.$apply();
+  };
 
   /**
    * Utility for getting the title for a Conversation

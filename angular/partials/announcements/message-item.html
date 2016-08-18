@@ -1,6 +1,6 @@
 <div class="announcement-item {{message.isRead ? 'is-read' : 'is-unread'}}"
      ng-click="toggleMessageOpen()"
-     ng-controller="messageListItemCtrl"
+     ng-controller="announcementListItemCtrl"
      ng-repeat="message in data track by message.id">
   <div class='unread-bullet {{message.isRead ? "" : "fa fa-circle"}}'></div>
   <div class='name'>{{message.sender.displayName}}</div>

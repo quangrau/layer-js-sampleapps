@@ -135,47 +135,9 @@ body {
   color: rgba(0,0,0,0.54);
 }
 
-/* Avatars */
-div.avatar-image {
-  border-radius: 50%;
-  position: relative;
-  overflow: hidden;
-}
-
-div.avatar-image.cluster, .conversation-item .avatar-image {
-  border-radius: 0;
-  background: none;
-  width: 40px;
-  height: 40px;
-}
-
-div.avatar-image.cluster img {
-  width: 75%;
-  height: 75%;
-}
-div.avatar-image.cluster > * {
-  position: absolute;
-  width: 34px;
-  height: 34px;
-}
-
-div.avatar-image.cluster span:last-child {
-  margin-left: 33.333%;
-  margin-top: 33.333%;
-}
-
-.avatar-image {
-  margin-right: 10px;
-  -webkit-align-items: flex-center;
-  align-items: center;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-}
 
 /* Conversation List */
-.conversation-list {
+layer-conversation-list {
   display: -webkit-flex;
   display: flex;
   flex-direction: column;
@@ -184,33 +146,6 @@ div.avatar-image.cluster span:last-child {
   -webkit-flex-grow: 1;
   flex-grow: 1;
 }
-
-.conversation-list .conversation-item {
-  padding: 10px 12px;
-  color: black;
-  text-decoration: none;
-  border-left: 3px solid transparent;
-  border-bottom: 1px solid #e4e9ec;
-}
-
-.conversation-list .conversation-item.unread-messages {
-  font-weight: bold;
-}
-
-.conversation-list .conversation-item.selected-conversation {
-  background-color: #F5F5F5;
-  border-left: 3px solid #19a5e4;
-  max-width: 100%;
-}
-
-.conversation-list .delete {
-  cursor: pointer;
-  color: gray;
-  font-size: 20px;
-  text-indent: -28px;
-  opacity: 0;
-}
-
 
 .panel-header {
   background-color: #ebebeb;
@@ -277,7 +212,7 @@ div.avatar-image.cluster span:last-child {
   max-width: 420px;
   min-width: 320px;
 }
-.left-panel .conversation-list {
+.left-panel layer-conversation-list {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-flex-grow: 1;
@@ -300,223 +235,12 @@ div.avatar-image.cluster span:last-child {
   height: 100%;
 }
 
-.conversation-panel-message-list {
+layer-conversation {
   height: 100px;  // Flexbox workaround
   -webkit-flex-grow: 1;
   flex-grow: 1;
-  display: -webkit-flex;
-  display: flex;
-  flex-direction: column;
-  -webkit-flex-direction: column;
 }
 
-.typing-indicator-panel {
-  height: 12px;
-  padding: 3px 20px;
-  font-size: 10px;
-  text-align: center;
-}
-.message-composer {
-  display: -webkit-flex;
-  display: flex;
-  height: 50px;
-  border-top: 1px solid #dedede;
-}
-.message-composer .message-textarea {
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
-  font-size: 14px;
-  text-indent: 8px;
-  resize: none;
-  outline: none;
-  padding: 4px 10px;
-  color: rgba(0,0,0,0.87);
-  line-height: 30px;
-  overflow: hidden;
-  background-color: #fafbfc;
-  border: 1px solid #E4E9EC;
-}
-
-/* Message List */
-.message-list {
-  display: block;
-  position: relative;
-  height: 100%;
-  padding: 0 12px;
-  overflow-y: auto;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
-}
-.message-list .layer-logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 400px;
-  margin-left: -200px;
-  margin-top: -200px;
-  opacity: 0.1;
-}
-.message-list .timestamp {
-  -webkit-flex: 1;
- flex: 1;
-  color: rgba(0,0,0,0.4);
-  font-size: 12px;
-  text-align: right;
-}
-
-/* Message Items (A single Message */
-.message-item {
-  display: -webkit-flex;
-  display: flex;
-  margin-bottom: 15px;
-}
-.message-item:first-child {
-  margin-top: 15px;
-}
-.message-item .main {
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
-  max-width: 55%;
-}
-.message-item .message-content {
-  max-width: 60%;
-}
-.message-item .message-parts {
-  display: -webkit-flex;
-  display: flex;
-  flex-direction: column;
-  -webkit-flex-direction: column;
-  -webkit-box-align: start;
-  -webkit-align-items: flex-start;
-  align-items: flex-start;
-}
-.message-item .bubble {
-  display: -webkit-flex;
-  display: flex;
-  border-radius: 16px;
-  background-color: rgba(25, 165, 228, 1.0);
-  overflow: hidden;
-  margin: 1px 0;
-  max-width: 100%;
-}
-.message-item .bubble.text {
-  padding: 8px 12px;
-  font-size: 14px;
-  line-height: 1.4;
-  color: #fff;
-}
-
-.message-item .bubble.quote {
-  padding: 8px 12px;
-  color: #000;
-  font-style: italic;
-  background-color: rgba(240, 240, 240, 1.0);
-  border: solid 2px rgba(25, 165, 228, 1.0);
-}
-
-.message-item .bubble.quote:before {
-  content: open-quote;
-  margin-right: 4px;
-  font-weight: bold;
-}
-
-.message-item .bubble.quote:after {
-  content: close-quote;
-  margin-left: 4px;
-  font-weight: bold;
-}
-
-.message-item .name {
-  color: rgba(0,0,0,0.4);
-  font-size: 12px;
-  font-weight: normal;
-  line-height: 1.1;
-  margin-bottom: 1px;
-  padding-left: 8px;
-}
-.message-item .message-status {
-  display: block;
-  color: rgba(0,0,0,0.4);
-  font-size: 12px;
-  font-weight: normal;
-  line-height: 1.1;
-}
-
-.message-item.right {
-  -webkit-flex-direction: row-reverse;
-  flex-direction: row-reverse;
-}
-.message-item.right .bubble {
-  background-color: #dedede;
-}
-.message-item.right .message-parts {
-  -webkit-align-items: flex-end;
-  align-items: flex-end;
-}
-
-.conversation-item {
-  display: -webkit-flex;
-  display: flex;
-}
-.conversation-item.selected {
-  background-color: #f0f0f0;
-}
-
-.conversation-item .info {
-  -webkit-flex: 1;
- flex: 1;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
-  width: 150px;  // flexbox bug
-  display: -webkit-flex;
-  display: flex;
-  flex-direction: column;
-  -webkit-flex-direction: column;
-  -webkit-justify-content: center;
-  justify-content: center;
-}
-.conversation-item .main {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
-}
-
-.conversation-item .main label {
-  line-height: 50px;
-}
-
-.conversation-item .title {
-  -webkit-flex: 1;
- flex: 1;
-  padding: 0 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 15px;
-  line-height: 1.4;
-}
-.conversation-item .timestamp {
-  color: rgba(0,0,0,0.4);
-  display: inline-block;
-  font-size: 13px;
-  font-weight: 400;
-  padding-top: 4px;
-}
-.conversation-item .description {
-  color: rgba(0,0,0,0.4);
-  font-size: 13px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.conversation-item:hover .delete {
-  opacity: 1;
-}
 
 .unread-announcements .fa {
   color: red;
@@ -529,11 +253,13 @@ div.avatar-image.cluster span:last-child {
   width: 100%;
   height: 100%;
   background-color: rgba(100, 100, 100, 0.6);
+  z-index: 500;
 }
 .dialog.hidden {
   display: none;
 }
-.dialog > div {
+
+.dialog > * {
   width: 100%;
   height: 100%;
   display: flex;
@@ -557,8 +283,6 @@ div.avatar-image.cluster span:last-child {
   -webkit-flex-direction: column;
   -webkit-align-items: stretch;
   align-items: stretch;
-  -webkit-justify-content: stretch;
-  justify-content: stretch;
 }
 
 .dialog .button-panel {
@@ -575,7 +299,7 @@ div.avatar-image.cluster span:last-child {
   font-size: 1.2em;
 }
 
-.announcement-list, .participant-list {
+.announcement-list, layer-user-list {
   overflow-y: auto;
   -webkit-flex-grow: 1;
   flex-grow: 1;
@@ -587,7 +311,7 @@ div.avatar-image.cluster span:last-child {
 }
 
 
-.announcement-item, .participant-item {
+.announcement-item {
   display: -webkit-flex;
   display: flex;
   -webkit-flex-direction: row;
@@ -596,7 +320,7 @@ div.avatar-image.cluster span:last-child {
   cursor: pointer;
 }
 
-.announcement-item:last-child, .participant-item:last-child {
+.announcement-item:last-child {
   border-bottom: solid 1px transparent;
 }
 
@@ -615,25 +339,9 @@ div.avatar-image.cluster span:last-child {
 }
 
 
-.announcement-item .name, .participant-item label {
+.announcement-item .name {
   padding: 10px 20px;
   font-weight: bold;
-}
-
-.participant-item .avatar-image {
-  width: 34px;
-}
-
-.participant-item label, .participant-item input {
-  cursor: pointer;
-}
-
-.participant-item {
-  padding: 0px 10px;
-}
-
-.participant-item:hover {
-  background-color: rgba(0,0,0,0.15);
 }
 
 .announcement-item .name {
@@ -661,16 +369,3 @@ div.avatar-image.cluster span:last-child {
   padding: 10px 20px;
 }
 
-.participant-item {
-  display: flex;
-  display-direction: row;
-  align-items: center;
-}
-
-.participant-item label {
-  flex-grow: 1;
-}
-
-.participant-item input {
-  margin-right: 10px;
-}

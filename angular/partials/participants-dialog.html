@@ -2,16 +2,13 @@
     <div class="panel-header">
         <span class="title">Select Participants</span>
     </div>
-    <div class='participant-list'>
-      <div class="participant-item" ng-repeat="user in appCtrlState.users track by user.id">
-        <div class="avatar-image"><img src="{{user.avatarUrl}}" /></div>
-        <label for="{{'participant-checkbox-' + user.id}}">{{user.displayName}}</label>
-        <input value={{user.userId}}
-              id="{{'participant-checkbox-' + user.id}}"
-              type="checkbox"
-              name="userList" />
-      </div>
-    </div>
+    <layer-user-list
+        ng-app-id="appCtrlState.client.appId"
+        ng-query-id="identityQuery.id"
+        ng-user-selected="onUserSelectionChange"
+        ng-selected-users="selectedUsers"
+        >
+    </layer-user-list>
     <div class="button-panel">
       <button class="button-ok" ng-click="createConversation()">OK</button>
     </div>

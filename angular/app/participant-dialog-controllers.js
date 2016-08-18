@@ -4,41 +4,37 @@
 var controllers = angular.module('participantDialogControllers', []);
 
 /**
- * The New Conversation Controller provides a UI for creating a new Conversation.
- * This consists of a place to edit a title bar, a list of users to select,
+ * The Participant Dialog Controller provides a UI for creating a new Conversation.
+ * It could also be used to edit existing conversations.
+ * This Dialog consists of a list of users to select,
  * and a place to enter a first message.
  */
-controllers.controller('participantsDialogCtrl', function($scope) {
-  /**
-   * Hacky DOMish way of getting the selected users
-   * Angular developers should feel free to improve on this
-   * and submit a PR :-)
-   */
-  function getSelectedUsers() {
-    var result = Array.prototype.slice.call(document.querySelectorAll('.participant-list :checked'))
-      .map(function(node) {
-        return $scope.appCtrlState.client.getIdentity(node.value);
-      });
-    return result;
-  }
+controllers.controller('participantsDialogCtrl', function($scope, $location) {
+  $scope.selectedUsers = [];
+
+  $scope.$watch('chatCtrlState.showParticipants', function(newValue, oldValue) {
+    $scope.selectedUsers = [];
+  });
+
+  $scope.onUserSelectionChange = function(evt) {
+    var target = evt.target;
+    setTimeout(function() {
+      $scope.selectedUsers = target.selectedUsers.map(function(user) {return user.toObject();});
+      $scope.$apply();
+    }, 1);
+  };
 
   /**
-   * On typing a message and hitting ENTER, the send method is called.
-   * $scope.chatCtrlState.currentConversation is a basic object; we use it to get the
-   * Conversation instance and use the instance to interact with Layer Services
-   * sending the Message.
+   * Call createConversation if we have participants.
    *
-   * See: http://static.layer.com/sdk/docs/#!/api/layer.Conversation
-   *
-   * For this method, we simply do nothing if no participants;
-   * ideally, some helpful error would be reported to the user...
+   * Note that this will not be sent to the server until the user sends a Message.
    *
    * Once the Conversation itself has been created, update the URL
    * to point to that Conversation.
    */
   $scope.createConversation = function() {
     // Get the userIds of all selected users
-    var participants = getSelectedUsers();
+    var participants = $scope.selectedUsers.map(function(identity) {return identity.id;});
 
     if (participants.length) {
 
@@ -49,10 +45,7 @@ controllers.controller('participantsDialogCtrl', function($scope) {
       });
 
       // Update our location.
-      location.hash = '#' + conversationInstance.id.substring(8);
-      Array.prototype.slice.call(document.querySelectorAll('.participant-list :checked')).forEach(function(input) {
-        input.checked = false;
-      });
+      $location.path(conversationInstance.id.substring(8));
     }
   };
 });

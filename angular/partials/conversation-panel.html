@@ -1,31 +1,9 @@
 <div ng-controller="conversationCtrl">
-  <div class="panel-header">
-    <div class="title" >
-      <span ng-hide="chatCtrlState.currentConversation"> &larr; Create a new conversation or select a conversation from the list.</span>
-      <div class="title-inner"
-           ng-hide="editingTitle">
-        {{getConversationTitle(chatCtrlState.currentConversation)}}
-        <a href='#' class='edit-title-icon' title="Edit conversation title" ng-click='setEditTitle(true)'>
-          <i ng-show="chatCtrlState.currentConversation" class="fa fa-pencil"></i>
-        </a>
-      </div>
-
-      <div class="edit-title" ng-show="editingTitle">
-        <input type="text" ng-value="getConversationTitle(chatCtrlState.currentConversation)"
-               ng-enter="saveTitle()" ng-model='chatCtrlState.currentConversation.metadata.title'/>
-        <button ng-click="setEditTitle(false)" >Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="conversation-panel-message-list" ng-include="'partials/messages/message-list.html'">
-  </div>
-
-  <div class='typing-indicator-panel' ng-controller='typingIndicatorCtrl'>
-    {{getText()}}
-  </div>
-
-  <div class="message-composer" ng-show="chatCtrlState.currentConversation">
-    <input ng-enter="send()" ng-model='sendText' class="message-textarea" placeholder="Enter a message..." rows="1"></input>
-  </div>
+  <div ng-include="'partials/conversation-header.html'"></div>
+  <!-- Demonstrates configuring widgets using ng-app-id and ng-query-id; can also use ng-client and ng-query -->
+  <layer-conversation
+    ng-delete-message-enabled="true"
+    ng-app-id="appCtrlState.client.appId"
+    ng-query-id="query.id"
+    ng-conversation-id="chatCtrlState.currentConversation.id"></layer-conversation>
 </div>

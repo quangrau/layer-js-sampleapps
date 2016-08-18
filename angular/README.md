@@ -1,3 +1,7 @@
+# TODO
+
+Figure out how to publish websdk-component-controllers.js
+
 # Angular JS Demo
 
 This is a simple example on how one would use the Layer Web SDK using [AngularJS](https://angularjs.org/) framework.

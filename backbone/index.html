@@ -18,7 +18,11 @@
   <script src="common/layerSample.js"></script>
 
   <!-- Layer Web SDK -->
-  <script src='http://cdn.layer.com/sdk/2.0.0-beta/layer-websdk.min.js'></script>
+  <script src='https://cdn.layer.com/sdk/2.0.0-beta.3/layer-websdk.min.js'></script>
+
+  <!-- TODO: Change from -dev to -alpha -->
+  <script src='https://s3.amazonaws.com/static.layer.com/sdk/layer-ui-dev/layer-websdkui-standard.js'></script>
+  <link href='https://s3.amazonaws.com/static.layer.com/sdk/layer-ui-dev/themes/layerblue.css' rel='stylesheet' />
 
   <!-- Backbone build -->
   <script src="bundle.js"></script>
@@ -36,16 +40,11 @@
             <i class="icon fa fa-pencil-square-o"></i>
           </a>
         </div>
-        <div class="conversation-list"></div>
+        <layer-conversation-list></layer-conversation-list>
       </div>
       <div class="right-panel">
         <div class='conversation-header panel-header'></div>
-        <div class="message-list"><img class="layer-logo" src="http://static.layer.com/logo-only-black.svg" /></div>
-        <div class="user-list"></div>
-        <div class='typing-indicator-panel'></div>
-        <div class="message-composer">
-          <input class="message-textarea" placeholder="Enter a message..."></input>
-        </div>
+        <layer-conversation></layer-conversation>
       </div>
       <div class="announcements-dialog dialog hidden">
         <div>

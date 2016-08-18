@@ -2,44 +2,25 @@
 
 var Backbone = require('backbone');
 
-var MessageView = require('./message');
-
 module.exports = Backbone.View.extend({
-  el: '.message-list',
-  initialize: function() {
-    this.scrollSnap = true;
-  },
-  newConversation: function() {
-    this.$el.hide();
-  },
-  render: function() {
-    if (!this.messages) return;
+  el: 'layer-conversation',
+  initialize: function(client) {
+    /**
+     * Create Message List Query
+     */
+    this.query = client.createQuery({
+      model: layer.Query.Message
+    });
 
-    var messages = this.messages.concat().reverse();
-    console.log('render: ' + messages.length + ' Messages');
-
-    this.$el.show();
-    this.$el.empty();
-    messages.forEach(this.addMessage, this);
-
-    this.scrollBottom();
+    /**
+     * Setup the <layer-conversation /> widget
+     */
+    this.$el[0].query = this.query;
+    this.$el[0].client = client;
   },
-  addMessage: function(message) {
-    var messageView = new MessageView({model: message});
-    this.$el.append(messageView.$el);
-    messageView.render();
-
-    if (message.isRead === false) message.isRead = true;
-    this.scrollBottom();
-  },
-  events: {
-    'scroll': 'scrollView'
-  },
-  scrollView: function(e) {
-    this.scrollSnap = e.target.scrollTop < (e.target.scrollTopMax - 40);
-    if (e.target.scrollTop === 0) this.trigger('messages:paginate');
-  },
-  scrollBottom: function() {
-    if (!this.scrollSnap) this.el.scrollTop = this.el.scrollHeight;
+  setConversation: function(conversation) {
+    this.query.update({
+      predicate: 'conversation.id = "' + conversation.id + '"'
+    });
   }
 });

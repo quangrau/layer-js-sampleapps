@@ -3,13 +3,11 @@
 
 var app = angular.module('ChatApp', [
   'sampleAppControllers',
+  'websdkComponentControllers',
   'conversationPanelControllers',
   'conversationListControllers',
-  'participantDialogControllers',
-  'messageListControllers',
-  'messageItemControllers',
-  'infinite-scroll',
-  'ngRoute'
+  'announcementListControllers',
+  'participantDialogControllers'
 ]);
 
 /*

@@ -1,0 +1,25 @@
+<div class="panel-header">
+  <div class="title" >
+
+    <!-- Default Message -->
+    <span ng-hide="chatCtrlState.currentConversation"> &larr; Create a new conversation or select a conversation from the list.</span>
+
+    <!-- Title with Edit Button -->
+    <div class="title-inner"
+          ng-hide="editingTitle">
+      {{getConversationTitle(chatCtrlState.currentConversation)}}
+      <a href='#' class='edit-title-icon' title="Edit conversation title" ng-click='setEditTitle(true)'>
+        <i ng-show="chatCtrlState.currentConversation" class="fa fa-pencil"></i>
+      </a>
+    </div>
+
+    <!-- Title Editor -->
+    <div class="edit-title" ng-show="editingTitle">
+      <input  type="text"
+              ng-value="getConversationTitle(chatCtrlState.currentConversation)"
+              ng-enter="saveTitle()"
+              ng-model='headerState.title'/>
+      <button ng-click="setEditTitle(false)" >Cancel</button>
+    </div>
+  </div>
+</div>

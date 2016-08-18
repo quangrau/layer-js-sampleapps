@@ -9,17 +9,14 @@ var controllers = angular.module('conversationListControllers', []);
  *
  * This Controller manages the Conversation Query which delivers
  * all Conversations and any changes to the Conversations.
- *
- * Rendering is done by iterating over $scope.query.data
  */
 controllers.controller('conversationListCtrl', function ($scope, $rootScope) {
-
 
   // Create the Conversation List query
   $scope.query = $scope.appCtrlState.client.createQuery({
     model: layer.Query.Conversation,
     dataType: 'object',
-    paginationWindow: 500
+    paginationWindow: 50
   });
 
   /**
@@ -33,18 +30,4 @@ controllers.controller('conversationListCtrl', function ($scope, $rootScope) {
   $scope.query.on('change', function() {
     $rootScope.$digest();
   });
-
-  /**
-   * This deletes a Conversation from the server.
-   */
-  $scope.deleteConversation = function(conversation) {
-    var conversationInstance = $scope.appCtrlState.client.getConversation(conversation.id);
-    if (conversationInstance) {
-      window.setTimeout(function() {
-        if (confirm('Are you sure you want to delete this conversation?')) {
-          conversationInstance.delete(layer.Constants.DELETION_MODE.ALL);
-        }
-      }, 1);
-    }
-  };
 });
