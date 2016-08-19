@@ -1,5 +1,3 @@
-# TODO: Publish layer-react update to npm
-
 # React chat UI example using Layer SDK
 
 This is a simple example on how one would use the Layer Web SDK with the [ReactJS](https://reactjs.org) framework.
