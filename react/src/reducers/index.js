@@ -8,7 +8,7 @@ import announcementReducer from './announcementReducer';
 const rootReducer = combineReducers({
   app: appReducer,
   router: routerStateReducer,
-  activeConversation: activeConversationReducer,
+  activeConversationState: activeConversationReducer,
   participantState: participantReducer,
   announcementState: announcementReducer,
 });

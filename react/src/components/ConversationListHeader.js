@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-
 /**
  * This Component provides a title over the conversation list
  * and a button for creating a new Conversation.
  */
+import React, { Component } from 'react';
+
 export default class ConversationListHeader extends Component {
   /**
    * Show the Participants Dialog
@@ -22,12 +22,12 @@ export default class ConversationListHeader extends Component {
   }
 
   render() {
-    const { unreadAnnouncements, owner } = this.props;
+    const { unreadAnnouncements, user } = this.props;
     const announcementClasses = ['announcements-button'];
     if (unreadAnnouncements) announcementClasses.push('unread-announcements');
     return (
       <div className='panel-header conversations-header'>
-        <div className='title'>{owner.displayName}'s Conversations</div>
+        <div className='title'>{user.displayName}'s Conversations</div>
         <a className={announcementClasses.join(' ')} onClick={this.showAnnouncements}>
           <i className="icon fa fa-bullhorn"></i>
         </a>

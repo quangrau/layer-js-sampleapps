@@ -1,3 +1,9 @@
+/**
+ * Manages state concerning the Announcements Dialog.
+ *
+ * Note that the announcements themselves are copied into our state using the layer-react module,
+ * and are not part of our Reducers.
+ */
 import {
   SHOW_ANNOUNCEMENTS,
   HIDE_ANNOUNCEMENTS,

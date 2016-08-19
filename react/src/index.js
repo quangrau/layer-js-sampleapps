@@ -30,15 +30,9 @@ window.addEventListener('message', function(evt) {
   /**
    * Client authentication challenge.
    * Sign in to Layer sample identity provider service.
-   *
-   * See http://static.layer.com/sdk/docs/#!/api/layer.Client-event-challenge
    */
   client.once('challenge', e => {
     window.layerSample.challenge(e.nonce, e.callback);
-  });
-
-  client.on('ready', () => {
-    store.dispatch(ownerSet(client.user.toObject()));
   });
 
   /**

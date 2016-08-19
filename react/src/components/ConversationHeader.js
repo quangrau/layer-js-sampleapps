@@ -1,3 +1,7 @@
+/**
+ * This Component is the header that goes over the Message List, presenting an editable Conversation title.
+ */
+
 import React, { Component } from 'react';
 
 const ENTER = 13;
@@ -45,7 +49,7 @@ export default class ConversationHeader extends Component {
       <div className='conversation-header panel-header'>
         <div className='title edit-title'>
           <input
-            defaultValue={activeConversation ? activeConversation.metadata.title : ''}
+            defaultValue={title || activeConversation.metadata.title}
             placeholder='Conversation title...'
             onKeyDown={this.handleKeyDown}
             onChange={this.handleChangeTitle}/>

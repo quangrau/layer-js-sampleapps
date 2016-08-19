@@ -1,3 +1,7 @@
+/**
+ * This component is used to represent the sender of an Announcement; no longer used elsewhere in the app.
+ */
+
 import React, { Component, PropTypes } from 'react';
 import cx from 'classnames';
 

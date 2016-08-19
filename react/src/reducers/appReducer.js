@@ -1,12 +1,18 @@
+/**
+ * Manages global state for our app.
+ *
+ * Currently, the main global state is whether or not the client is ready,
+ * and who our current user is.
+ */
 import {
   CLIENT_READY,
-  OWNER_SET
 } from '../actions/messenger';
 
 const initialState = {
   ready: false,
   clientReady: false,
-  owner: {}
+  user: {},
+  appId: '',
 };
 
 export default function appReducer(state = initialState, action) {
@@ -17,12 +23,9 @@ export default function appReducer(state = initialState, action) {
       return {
         ...state,
         ready: true,
-        clientReady: true
-      };
-    case OWNER_SET:
-      return {
-        ...state,
-        owner: payload.owner,
+        clientReady: true,
+        user: payload.user,
+        appId: payload.appId,
       };
     default:
       return state;

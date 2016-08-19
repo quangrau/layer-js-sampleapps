@@ -1,3 +1,10 @@
+/**
+ * This is a Container with direct access to all actions and state, and
+ * is responsible for managing the UI of the left panel of the app.
+ * That consists of the Conversation List Header and the Conversation List and all Dialogs.
+ */
+
+
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -12,12 +19,17 @@ import UserListDialog from '../components/UserListDialog';
 /**
  * Copy data from reducers into our properties
  */
-function mapStateToProps({ app, announcementState, participantState, router }) {
+function mapStateToProps({ app, announcementState, participantState, activeConversationState, router }) {
   return {
-    owner: app.owner,
+    user: app.user,
+    appId: app.appId,
     ready: app.ready,
     showAnnouncements: announcementState.showAnnouncements,
     participantState,
+
+    // Note: We might have an activeConversationId but no activeConversation during app initialization if the URL
+    // references a Conversation
+    activeConversation: activeConversationState.conversation,
     activeConversationId: `layer:///conversations/${router.params.conversationId}`,
   };
 }
@@ -30,15 +42,14 @@ function mapDispatchToProps(dispatch) {
 }
 
 /**
- * Setup all of the Queries; will set the query results to be
- * this.props.conversations, this.props.announcements, this.props.users.
- * Message query is setup elsewhere.
+ * Setup all of the Queries whose data needs to be in our Redux State.
+ *
+ * Why are announcements the only thing here? Because Messages, Conversations and Users
+ * are no longer needed in the redux state; the data is managed by the WebSDK UI Components.
  */
 function getQueries() {
   return {
-    conversations: QueryBuilder.conversations(),
-    announcements: QueryBuilder.announcements(),
-    users: QueryBuilder.identities(),
+    announcements: QueryBuilder.announcements()
   };
 }
 
@@ -70,28 +81,44 @@ export default class Messenger extends Component {
   }
 
   /**
+   * Update the selected Conversation state
+   */
+  onConversationSelected = (event) => {
+    const { actions } = this.props;
+    actions.selectConversation(event.detail.conversation.toObject());
+  }
+
+  /**
+   * After loading the app, see if we need to select the conversation ID to get the props.activeConversation.
+   */
+  componentDidMount() {
+    if (this.props.activeConversationId && !this.props.activeConversation) {
+      this.props.actions.selectConversationId(this.props.activeConversationId);
+    }
+  }
+
+  /**
    * Render the left panel with the Conversation List and List Header
    */
   renderLeftPanel() {
     const {
-      owner,
-      conversations,
+      user,
       announcements,
       activeConversationId,
-      actions
+      actions,
+      appId,
     } = this.props;
-
     return (
       <div className='left-panel'>
         <ConversationListHeader
-          owner={owner}
+          user={user}
           unreadAnnouncements={Boolean(announcements.filter(item => item.isUnread).length)}
           onShowAnnouncements={actions.showAnnouncements}
           onShowParticipants={actions.showParticipants}/>
         <ConversationList
-          conversations={conversations}
-          activeConversationId={activeConversationId}
-          onDeleteConversation={actions.deleteConversation}/>
+          appId={appId}
+          selectedConversationId={activeConversationId}
+          onConversationSelected={this.onConversationSelected}/>
       </div>
     );
   }
@@ -118,7 +145,7 @@ export default class Messenger extends Component {
    * Render the Participants dialog.
    */
   renderParticipantDialog() {
-    const { owner, users, participantState, actions } = this.props;
+    const { owner, participantState, actions, appId } = this.props;
     const selectedParticipants = participantState.participants;
 
     return (
@@ -127,10 +154,10 @@ export default class Messenger extends Component {
         className="participants-dialog dialog">
         <div>
           <UserListDialog
-            users={users.filter(user => user.id !== owner.id)}
+            appId={appId}
             selectedUsers={selectedParticipants}
             onUserSelected={actions.addParticipant}
-            onUserUnselected={actions.removeParticipant}
+            onUserDeselected={actions.removeParticipant}
             onSave={actions.createConversation}/>
         </div>
       </div>
@@ -144,7 +171,6 @@ export default class Messenger extends Component {
     const {
       showAnnouncements,
       participantState,
-      users,
       conversations,
       announcements
     } = this.props;
@@ -157,8 +183,7 @@ export default class Messenger extends Component {
       <div className='messenger'>
         {this.renderLeftPanel()}
         {this.props.children && React.cloneElement(this.props.children, {
-          conversations,
-          users
+          conversations
         })}
         {showAnnouncements ? this.renderAnnouncementDialog() : <span />}
         {showParticipants ? this.renderParticipantDialog() : <span />}

@@ -1,47 +1,33 @@
-import React, { Component, PropTypes } from 'react';
-import UserListItem from './UserListItem';
-
 /**
- * This Component renders a list of users,
- * currently provided by UserListItems which
- * allow the UI to provide a New Conversation panel.
+ * This Component renders a dialog for selecting users for a new Conversation.
  */
-export default class UserList extends Component {
-  /**
-   * Render a UserListItem for this user
-   */
-  renderUserItem = (user) => {
-    const {
-      selectedUsers,
-      onUserSelected,
-      onUserUnselected
-    } = this.props;
-    const selected = Boolean(selectedUsers.filter(selectedUser => selectedUser.id === user.id).length);
+import React, { Component, PropTypes } from 'react';
+import UserList from './UserList';
 
-    return (
-      <UserListItem
-        key={user.id}
-        user={user}
-        selected={selected}
-        onUserSelected={onUserSelected}
-        onUserUnselected={onUserUnselected}/>
-    );
+export default class UserListDialog extends Component {
+
+  onSave = () => {
+    if (this.props.selectedUsers.length) this.props.onSave();
   }
 
   /**
    * Render the User List Dialog
    */
   render() {
+    const { selectedUsers, onUserSelected, onUserDeselected, appId } = this.props;
     return (
       <div className="participant-list-container dialog-container">
         <div className="panel-header">
           <span className="title">Select Participants</span>
         </div>
-        <div className="participant-list">
-          {this.props.users.map(this.renderUserItem)}
-        </div>
+        <UserList
+          appId={appId}
+          onUserSelected={onUserSelected}
+          onUserDeselected={onUserDeselected}
+          selectedUsers={selectedUsers}
+        />
         <div className="button-panel">
-          <button onClick={this.props.onSave} className="button-ok">OK</button>
+          <button onClick={this.onSave} className="button-ok">OK</button>
         </div>
       </div>
     );

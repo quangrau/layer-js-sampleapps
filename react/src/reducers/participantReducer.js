@@ -1,3 +1,6 @@
+/**
+ * Manage state of our Participant Dialog used for creating new Conversations.
+ */
 import {
   CREATE_CONVERSATION,
   SHOW_PARTICIPANTS,

@@ -1,3 +1,9 @@
+/**
+ * This is a Container with direct access to all actions and state, and
+ * is responsible for managing the UI of the right panel of the app.
+ * That consists of the Conversation Header and the Conversation Panel
+ */
+
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect as connectRedux } from 'react-redux';
@@ -5,16 +11,15 @@ import { QueryBuilder } from 'layer-sdk';
 import { connectQuery } from 'layer-react';
 import * as MessengerActions from '../actions/messenger';
 import ConversationHeader from '../components/ConversationHeader';
-import MessageList from '../components/messages/MessageList';
-import MessageComposer from '../components/MessageComposer';
-import TypingIndicatorContainer from './TypingIndicatorContainer';
+import ConversationPanel from '../components/ConversationPanel';
 
 /**
  * Copy data from reducers into our properties
  */
-function mapStateToProps({ activeConversation, router }) {
+function mapStateToProps({ activeConversationState, router }) {
   return {
-    ...activeConversation,
+    ...activeConversationState,
+    activeConversation: activeConversationState.conversation,
     activeConversationId: `layer:///conversations/${router.params.conversationId}`
   };
 }
@@ -26,40 +31,25 @@ function mapDispatchToProps(dispatch) {
   return { actions: bindActionCreators(MessengerActions, dispatch) };
 }
 
-/**
- * Setup the Messages Queriy; will set the query results to be
- * this.props.messages.
- */
-function getQueries({ activeConversationId, messagePagination }) {
-  return {
-    messages: QueryBuilder
-      .messages()
-      .forConversation(activeConversationId)
-      .paginationWindow(messagePagination)
-  };
-}
-
 @connectRedux(mapStateToProps, mapDispatchToProps)
-@connectQuery({}, getQueries)
 export default class ActiveConversation extends Component {
 
+  /**
+   * Render the Right Panel which contains the Header, and the Conversation Panel
+   */
   render() {
     const {
       editingTitle,
       title,
       composerMessage,
+      activeConversation,
       activeConversationId,
+      activeConversationState,
       conversations,
       messages,
       actions
     } = this.props;
 
-    const activeConversation = conversations.find((conversation) => {
-      return conversation.id === activeConversationId;
-    });
-
-    // Render the ConversationHeader, MessageList,
-    // TypingIndicatorContainer and MessageComposer
     return (
       <div className='right-panel'>
         <ConversationHeader
@@ -70,19 +60,9 @@ export default class ActiveConversation extends Component {
           onChangeConversationTitle={actions.changeConversationTitle}
           onSaveConversationTitle={actions.saveConversationTitle}
           onCancelEditConversationTitle={actions.cancelEditConversationTitle}/>
-
-        <MessageList
-          messages={messages}
-          onMarkMessageRead={actions.markMessageRead}
-          onLoadMoreMessages={actions.loadMoreMessages}/>
-
-        <TypingIndicatorContainer
+        <ConversationPanel
+          appId={window.layerSample.appId}
           conversationId={activeConversationId}/>
-
-        <MessageComposer
-          value={composerMessage}
-          onChange={actions.changeComposerMessage}
-          onSubmit={actions.submitComposerMessage}/>
       </div>
     );
   }
