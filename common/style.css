@@ -138,10 +138,6 @@ body {
 
 /* Conversation List */
 layer-conversation-list {
-  display: -webkit-flex;
-  display: flex;
-  flex-direction: column;
-  -webkit-flex-direction: column;
   overflow-y: auto;
   -webkit-flex-grow: 1;
   flex-grow: 1;
