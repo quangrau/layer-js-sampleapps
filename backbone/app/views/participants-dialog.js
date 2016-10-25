@@ -10,25 +10,14 @@
 
 
 var Backbone = require('backbone');
+const LayerUIWidgets = window.layerUI.adapters.backbone(Backbone);
+var UserList = LayerUIWidgets.UserList;
 
 module.exports = Backbone.View.extend({
   el: '.participants-dialog',
   initialize: function(client) {
     this.$el.find('.button-ok').on('click', this.createConversation.bind(this));
-    this.listNode = this.$el.find('layer-user-list')[0];
-
-    /**
-     * Create Identity List Query
-     */
-    this.query = client.createQuery({
-      model: layer.Query.Identity
-    });
-
-    /**
-     * Setup the <layer-user-list /> widget
-     */
-    this.listNode.query = this.query;
-    this.listNode.client = client;
+    this.userList = new UserList(client);
   },
 
   /**
@@ -36,14 +25,14 @@ module.exports = Backbone.View.extend({
    * you can use it to update the participants in a Conversation.
    */
   clearParticipants: function() {
-    this.listNode.selectedUsers = [];
+    this.userList.selectedUsers = [];
   },
 
   /**
    * Tell the Controller to create the Conversation.
    */
   createConversation: function() {
-    var participants = this.listNode.selectedUsers;
+    var participants = this.userList.selectedUsers;
     if (participants.length) {
       this.hide();
       this.trigger('conversation:create', participants);

@@ -3,8 +3,9 @@
 
 var Backbone = require('backbone');
 
-var ConversationsView = require('./views/conversations');
-var MessagesView = require('./views/messages');
+const LayerUIWidgets = window.layerUI.adapters.backbone(Backbone);
+var ConversationsView = LayerUIWidgets.ConversationList;
+var MessagesView = LayerUIWidgets.Conversation;
 var TitlebarView = require('./views/titlebar');
 var ParticipantsView = require('./views/participants-dialog');
 var AnnouncementsView = require('./views/announcements');
@@ -26,7 +27,11 @@ var router = new Router();
 module.exports = function(client) {
   var activeConversationId = null;
 
-  var conversationsView = new ConversationsView(client);
+  var conversationsView = new ConversationsView(client, {
+    onConversationSelected: function(evt) {
+      location.hash = evt.detail.conversation.id.replace(/^layer:\/\/\//, '');
+    }
+  });
   var messagesView = new MessagesView(client);
   var titlebarView = new TitlebarView();
   var participantsView = new ParticipantsView(client);
@@ -104,7 +109,7 @@ module.exports = function(client) {
   router.on('route:conversation:selected', function(uuid) {
     activeConversationId = 'layer:///conversations/' + uuid;
     var conversation = client.getConversation(activeConversationId, true);
-    messagesView.setConversation(conversation);
+    messagesView.conversationId = conversation.id;
     titlebarView.setConversation(conversation);
   });
 

@@ -65,6 +65,9 @@ sampleControllers.controller('appCtrl', function ($scope) {
 
     // Create the User List query; this query will automatically wait to fire
     // until after the client has finished authenticating.
+    // Note that this is used Solely for validating your account is setup, and would not
+    // typically be in an app.  This is NOT used for generating a User List.
+    // <layer-user-list /> generates that Query for you.
     $scope.identityQuery = $scope.appCtrlState.client.createQuery({
       model: layer.Query.Identity,
       dataType: 'object',
@@ -172,5 +175,7 @@ sampleControllers.controller('chatCtrl', function ($scope, $location) {
     }
     return '';
   };
+
+
 });
 

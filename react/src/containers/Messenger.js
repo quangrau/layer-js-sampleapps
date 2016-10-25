@@ -6,13 +6,17 @@
 
 
 import React, { Component, PropTypes } from 'react';
+import ReactDom from 'react-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { QueryBuilder } from 'layer-sdk';
 import { connectQuery } from 'layer-react';
 import * as MessengerActions from '../actions/messenger';
-import ConversationList from '../components/ConversationList';
+const LayerUIWidgets = window.layerUI.adapters.react(React, ReactDom);
+const ConversationList = LayerUIWidgets.ConversationList;
+const Notifier = LayerUIWidgets.Notifier;
 import ConversationListHeader from '../components/ConversationListHeader';
+
 import AnnouncementsList from '../components/announcements/MessageList';
 import UserListDialog from '../components/UserListDialog';
 
@@ -30,7 +34,7 @@ function mapStateToProps({ app, announcementState, participantState, activeConve
     // Note: We might have an activeConversationId but no activeConversation during app initialization if the URL
     // references a Conversation
     activeConversation: activeConversationState.conversation,
-    activeConversationId: `layer:///conversations/${router.params.conversationId}`,
+    activeConversationId: router.params.conversationId ? `layer:///conversations/${router.params.conversationId}` : '',
   };
 }
 
@@ -89,6 +93,14 @@ export default class Messenger extends Component {
   }
 
   /**
+   * Update the selected Conversation state after selecting a notification
+   */
+  onNotificationClick = (event) => {
+    const { actions } = this.props;
+    actions.selectConversationId(event.detail.message.conversationId);
+  }
+
+  /**
    * After loading the app, see if we need to select the conversation ID to get the props.activeConversation.
    */
   componentDidMount() {
@@ -110,6 +122,9 @@ export default class Messenger extends Component {
     } = this.props;
     return (
       <div className='left-panel'>
+        <Notifier
+          appId={appId}
+          onNotificationClick={this.onNotificationClick}></Notifier>
         <ConversationListHeader
           user={user}
           unreadAnnouncements={Boolean(announcements.filter(item => item.isUnread).length)}

@@ -14,34 +14,25 @@ controllers.controller('conversationCtrl', function($scope) {
   $scope.headerState = {
     title: ''
   };
-
-  // Create the Messages Query to load our Messages data
-  $scope.query = $scope.appCtrlState.client.createQuery({
-    model: layer.Query.Message,
-    dataType: 'object',
-    paginationWindow: 30
-  });
-
+  $scope.composeButtons = [
+    document.createElement('layer-file-upload-button')
+  ];
 
   // The Currently selected Conversation has changed
   $scope.$watch('chatCtrlState.currentConversation.id', function(newId, oldId) {
-    // Any time the currentConversation, update our Messages Query
-    $scope.query.update({
-      predicate: newId ? "conversation.id = '" + newId + "'" : null
-    });
 
     // For the new Conversation, listen for all changes to this Conversation's properties;
     // Primarily for rendering changes to metadata.title
     if (newId) {
       var conversation = $scope.appCtrlState.client.getConversation(newId);
-      if (conversation) conversation.on('conversations:change', $scope.handleWebSDKChange);
+      if (conversation) conversation.on('conversations:change', $scope.handleConversationChange);
       $scope.headerState.title = conversation.metadata.title;
     }
 
     // Stop listening to the old Conversation's property changes.
     if (oldId) {
       var oldConversation = $scope.appCtrlState.client.getConversation(oldId);
-      if (oldConversation) oldConversation.off(null, $scope.handleWebSDKChange);
+      if (oldConversation) oldConversation.off(null, $scope.handleConversationChange);
     }
   }, true);
 
@@ -49,7 +40,7 @@ controllers.controller('conversationCtrl', function($scope) {
    * Any time the currentConversation changes, update our currentConversation object and rerender.
    * Its expected that only things like `unreadCount`, `metadata` and `lastMessage` should change.
    */
-  $scope.handleWebSDKChange = function(evt) {
+  $scope.handleConversationChange = function(evt) {
     $scope.chatCtrlState.currentConversation = evt.target.toObject();
     if (!$scope.editingTitle) $scope.headerState.title = evt.target.metadata.title;
     $scope.$digest();
@@ -79,4 +70,13 @@ controllers.controller('conversationCtrl', function($scope) {
     $scope.editingTitle = false;
     $scope.$apply();
   };
+
+  new layerUI.files.DragAndDropFileWatcher({
+    node: document.querySelector('layer-conversation'),
+    callback: sendAttachment,
+    allowDocumentDrop: false
+  });
+  function sendAttachment(messageParts) {
+    $scope.chatCtrlState.currentConversation.createMessage({ parts: messageParts }).send();
+  }
 });

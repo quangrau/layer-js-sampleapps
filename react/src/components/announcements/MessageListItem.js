@@ -1,10 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import TextMessagePart from './TextMessagePart';
-import Avatar from '../Avatar';
 
 /**
  * This Component renders a single Message in a Message List
- * which includes Avatar, sender name, message body,
+ * which includes sender name, message body,
  * timestamp and status.
  */
 export default class MessageListItem extends Component {

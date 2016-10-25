@@ -2,7 +2,9 @@
  * This Component renders a dialog for selecting users for a new Conversation.
  */
 import React, { Component, PropTypes } from 'react';
-import UserList from './UserList';
+import ReactDom from 'react-dom';
+const LayerUIWidgets = window.layerUI.adapters.react(React, ReactDom);
+const UserList = LayerUIWidgets.UserList;
 
 export default class UserListDialog extends Component {
 
@@ -11,10 +13,29 @@ export default class UserListDialog extends Component {
   }
 
   /**
+   * Extract the User object before forwarding the callback up to the parent.
+   */
+  onUserSelected = (event) => {
+    const { actions } = this.props;
+    const user  = event.detail.user.toObject();
+    if (this.props.onUserSelected) this.props.onUserSelected(user);
+  }
+
+  /**
+   * Extract the User object before forwarding the callback up to the parent.
+   */
+  onUserDeselected = (event) => {
+    const { actions } = this.props;
+    const user = event.detail.user.toObject();
+    if (this.props.onUserSelected) this.props.onUserDeselected(user);
+  }
+
+
+  /**
    * Render the User List Dialog
    */
   render() {
-    const { selectedUsers, onUserSelected, onUserDeselected, appId } = this.props;
+    const { selectedUsers, appId } = this.props;
     return (
       <div className="participant-list-container dialog-container">
         <div className="panel-header">
@@ -22,8 +43,8 @@ export default class UserListDialog extends Component {
         </div>
         <UserList
           appId={appId}
-          onUserSelected={onUserSelected}
-          onUserDeselected={onUserDeselected}
+          onUserSelected={this.onUserSelected}
+          onUserDeselected={this.onUserDeselected}
           selectedUsers={selectedUsers}
         />
         <div className="button-panel">

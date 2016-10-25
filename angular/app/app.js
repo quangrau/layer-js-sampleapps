@@ -1,11 +1,12 @@
 /* global angular */
 'use strict';
+window.layerUI.adapters.angular(angular);
+
 
 var app = angular.module('ChatApp', [
   'sampleAppControllers',
-  'websdkComponentControllers',
+  'layerUIControllers',
   'conversationPanelControllers',
-  'conversationListControllers',
   'announcementListControllers',
   'participantDialogControllers'
 ]);
