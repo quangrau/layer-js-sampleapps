@@ -4,8 +4,9 @@
 var Backbone = require('backbone');
 
 const LayerUIWidgets = window.layerUI.adapters.backbone(Backbone);
-var ConversationsView = LayerUIWidgets.ConversationList;
-var MessagesView = LayerUIWidgets.Conversation;
+var NotifierView = LayerUIWidgets.Notifier;
+var ConversationsListView = LayerUIWidgets.ConversationList;
+var ConversationView = LayerUIWidgets.Conversation;
 var TitlebarView = require('./views/titlebar');
 var ParticipantsView = require('./views/participants-dialog');
 var AnnouncementsView = require('./views/announcements');
@@ -26,13 +27,23 @@ var router = new Router();
  */
 module.exports = function(client) {
   var activeConversationId = null;
+  var notifierView = new NotifierView(client, {
+    onNotificationClick: function(evt) {
+      var message = evt.detail.message;
+      location.hash = message.conversationId.replace(/^layer:\/\/\//, '');
+    }
+  });
 
-  var conversationsView = new ConversationsView(client, {
+  var conversationsListView = new ConversationsListView(client, {
     onConversationSelected: function(evt) {
       location.hash = evt.detail.conversation.id.replace(/^layer:\/\/\//, '');
     }
   });
-  var messagesView = new MessagesView(client);
+
+  var fileButton = document.createElement('layer-file-upload-button');
+  var conversationView = new ConversationView(client, {
+    composeButtons: [fileButton]
+  });
   var titlebarView = new TitlebarView();
   var participantsView = new ParticipantsView(client);
   var announcementsView = new AnnouncementsView();
@@ -109,7 +120,7 @@ module.exports = function(client) {
   router.on('route:conversation:selected', function(uuid) {
     activeConversationId = 'layer:///conversations/' + uuid;
     var conversation = client.getConversation(activeConversationId, true);
-    messagesView.conversationId = conversation.id;
+    conversationView.conversationId = conversation.id;
     titlebarView.setConversation(conversation);
   });
 
