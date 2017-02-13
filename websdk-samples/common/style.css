@@ -1,3 +1,4 @@
+
 html,
 body,
 body > * {
@@ -92,7 +93,7 @@ body {
 
 #identity button {
   width: 100%;
-  margin-top: 30px;
+  margin-top: 10px;
   color: #FFF;
   border: 1px solid #27A6E1;
   border-radius: 6px;
@@ -107,6 +108,11 @@ body {
   font-size: 18px;
 }
 
+.error-message {
+  margin-top: 10px;
+  color: red;
+  text-align: center;
+}
 
 /* Messenger Container */
 .main-app {

@@ -3,12 +3,15 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
+  var loginButton;
+  var errorDiv;
+
   /**
    * layerSample global utility
    *
    * @param {String}    appId - Layer Staging Application ID
    * @param {String}    userId - User ID to log in as
-   * @param {Function}  challenge - Layer Client challenge function
+   * @param {Function}  getIdentityToken - Layer Client getIdentityToken function
    * @param {Function}  dateFormat - Get a nice date string
    */
   window.layerSample = {
@@ -23,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Your app does not appear to have the expected users setup; see the README.md file which contains instructions for setting up these users');
       }
     },
-    challenge: function(nonce, callback) {
+    getIdentityToken: function(nonce, callback) {
       layer.xhr({
         url: 'https://layer-identity-provider.herokuapp.com/identity_tokens',
         headers: {
@@ -41,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }, function(res) {
         if (res.success) {
-          console.log('challenge: ok');
+          console.log('getIdentityToken: ok');
 
           callback(res.data.identity_token);
 
@@ -49,7 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
           var node = document.getElementById('identity');
           node.parentNode.removeChild(node);
         } else {
-          console.error('challenge error: ', res.data);
+          console.error('getIdentityToken error: ', res.data);
+          loginButton.innerHTML = 'Login';
+          errorDiv.innerHTML = 'Invalid Application ID';
         }
       });
     },
@@ -68,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var div = document.createElement('div');
   div.innerHTML += '<img src="http://static.layer.com/logo-only-blue.png" />';
   div.innerHTML += '<h1>Welcome to Layer sample app!</h1>';
+
   div.innerHTML += '<p>1. Enter your Staging Application ID:</p>';
 
   div.innerHTML += '<input name="appid" type="text" placeholder="Staging Application ID" value="' +
@@ -81,17 +87,22 @@ document.addEventListener('DOMContentLoaded', function() {
       'User ' + i + '</label>';
   }
 
-  var button = document.createElement('button');
-  button.appendChild(document.createTextNode('Login'));
+  errorDiv = document.createElement('div');
+  errorDiv.className = 'error-message';
+  errorDiv.innerHTML = "&nbsp;";
+  div.appendChild(errorDiv);
 
-  div.appendChild(button);
+  loginButton = document.createElement('button');
+  loginButton.appendChild(document.createTextNode('Login'));
+
+  div.appendChild(loginButton);
 
   var container = document.createElement('div');
   container.setAttribute('id', 'identity');
   container.appendChild(div);
   document.body.insertBefore(container, document.querySelectorAll('.main-app')[0]);
 
-  button.addEventListener('click', function() {
+  loginButton.addEventListener('click', function() {
     var appId = div.children.appid.value;
     if (!appId) return alert('Please enter your Staging Application ID');
 
@@ -103,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var radios = div.getElementsByTagName('input');
     for (var i = 0; i < radios.length; i++) {
       if (radios[i].type === 'radio' && radios[i].checked) {
-        button.innerHTML = '<i class="fa fa-spinner fa-pulse"></i>';
+        loginButton.innerHTML = '<i class="fa fa-spinner fa-pulse"></i>';
         window.layerSample.userId = radios[i].value;
         break;
       }

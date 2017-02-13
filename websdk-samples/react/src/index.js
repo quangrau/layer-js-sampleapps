@@ -1,15 +1,10 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Provider } from 'react-redux';
+
 import { Client, Query } from 'layer-websdk';
-import { LayerProvider } from 'layer-react';
-import Messenger from './containers/Messenger';
-import ActiveConversation from './containers/ActiveConversation';
-import DefaultPanel from './components/DefaultPanel';
 import configureStore from './store/configureStore';
 import { ownerSet } from './actions/messenger';
-import { IndexRoute, Route } from 'react-router';
-import { ReduxRouter } from 'redux-router';
+import ChatView from './ChatView'
 
 let client;
 /**
@@ -34,7 +29,7 @@ window.addEventListener('message', function(evt) {
    * See http://static.layer.com/sdk/docs/#!/api/layer.Client-event-challenge
    */
   client.once('challenge', e => {
-    window.layerSample.challenge(e.nonce, e.callback);
+    window.layerSample.getIdentityToken(e.nonce, e.callback);
   });
 
   client.on('ready', () => {
@@ -57,7 +52,7 @@ window.addEventListener('message', function(evt) {
    * anything else.  Note that we do query for Identities properly
    * in Messenger.js using `QueryBuilder.identities()`
    */
-  var identityQuery = client.createQuery({
+  let identityQuery = client.createQuery({
     model: Query.Identity,
     dataType: Query.ObjectDataType,
     change: function(evt) {
@@ -67,18 +62,9 @@ window.addEventListener('message', function(evt) {
     }
   });
 
-  // Render the UI wrapped in a LayerProvider
+  // Render the Chat UI passing in the client and store
   render(
-    <LayerProvider client={client}>
-      <Provider store={store}>
-        <ReduxRouter>
-          <Route path='/' component={Messenger}>
-            <IndexRoute component={DefaultPanel}/>
-            <Route path='/conversations/:conversationId' component={ActiveConversation}/>
-          </Route>
-        </ReduxRouter>
-      </Provider>
-    </LayerProvider>,
+    <ChatView client={client} store={store} />,
     document.getElementById('root')
   );
 });

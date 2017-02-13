@@ -1,15 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Provider } from 'react-redux';
 import * as Layer from 'layer-websdk';
-import { LayerProvider } from 'layer-react';
-import Messenger from './containers/Messenger';
-import ActiveConversation from './containers/ActiveConversation';
-import DefaultPanel from './components/DefaultPanel';
 import configureStore from './store/configureStore';
 import { ownerSet } from './actions/messenger';
-import { IndexRoute, Route } from 'react-router';
-import { ReduxRouter } from 'redux-router';
+import ChatView from './ChatView'
 
 let client;
 /**
@@ -32,7 +26,7 @@ window.addEventListener('message', function(evt) {
    * Sign in to Layer sample identity provider service.
    */
   client.once('challenge', e => {
-    window.layerSample.challenge(e.nonce, e.callback);
+    window.layerSample.getIdentityToken(e.nonce, e.callback);
   });
 
   /**
@@ -66,18 +60,8 @@ window.addEventListener('message', function(evt) {
     }
   });
 
-  // Render the UI wrapped in a LayerProvider
   render(
-    <LayerProvider client={client}>
-      <Provider store={store}>
-        <ReduxRouter>
-          <Route path='/' component={Messenger}>
-            <IndexRoute component={DefaultPanel}/>
-            <Route path='/conversations/:conversationId' component={ActiveConversation}/>
-          </Route>
-        </ReduxRouter>
-      </Provider>
-    </LayerProvider>,
+    <ChatView client={client} store={store} />,
     document.getElementById('root')
   );
 });

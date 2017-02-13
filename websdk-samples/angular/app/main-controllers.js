@@ -51,7 +51,7 @@ sampleControllers.controller('appCtrl', function ($scope) {
      * Sign in to Layer sample identity provider service.
      */
     $scope.appCtrlState.client.on('challenge', function(evt) {
-      window.layerSample.challenge(evt.nonce, evt.callback);
+      window.layerSample.getIdentityToken(evt.nonce, evt.callback);
     });
 
     /**
@@ -168,4 +168,3 @@ sampleControllers.controller('chatCtrl', function ($scope, $route, $location) {
     return '';
   };
 });
-

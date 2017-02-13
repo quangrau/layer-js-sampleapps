@@ -27,7 +27,7 @@ window.addEventListener('message', function(evt) {
    * See http://static.layer.com/sdk/docs/#!/api/layer.Client
    */
   client.once('challenge', function(e) {
-    window.layerSample.challenge(e.nonce, e.callback);
+    window.layerSample.getIdentityToken(e.nonce, e.callback);
   });
 
   /**
