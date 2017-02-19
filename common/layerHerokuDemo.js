@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     userId: null,
     validateSetup: function(client) {
     },
-    challenge: function(nonce, callback) {
+    getIdentityToken: function(nonce, callback) {
       layer.xhr({
         url: 'https://sample-provider.herokuapp.com/authenticate',
         headers: {
